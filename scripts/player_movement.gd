@@ -52,3 +52,5 @@ func _physics_process(delta: float) -> void:
 
 # wall jump too powerful. separated is_on_wall()
 # changed to is_on_wall_only() probably not much difference due to elif but better suited.
+
+# i need to implement coyote time (for a few frames after falling you can still jump)

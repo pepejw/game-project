@@ -1,6 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://38brrf768xwe"]
+[gd_scene load_steps=10 format=4 uid="uid://38brrf768xwe"]
 
 [ext_resource type="PackedScene" uid="uid://d22r3nvirl1jh" path="res://scenes/player.tscn" id="1_uwrxv"]
+[ext_resource type="Texture2D" uid="uid://lruudkh5kkod" path="res://assets/platform_temp.png" id="2_yqjtg"]
+[ext_resource type="Script" uid="uid://b7b20534daisa" path="res://scenes/coyote_timer.gd" id="3_lnu2h"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_yqjtg"]
 distance = -162.0
@@ -13,12 +15,26 @@ distance = -287.0
 normal = Vector2(-1, 0)
 distance = -286.0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_lnu2h"]
+texture = ExtResource("2_yqjtg")
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 1.0628, -8, 1.0628)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_lbhrr"]
+texture = ExtResource("2_yqjtg")
+
+[sub_resource type="TileSet" id="TileSet_iywne"]
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_lnu2h")
+sources/1 = SubResource("TileSetAtlasSource_lbhrr")
+
 [node name="Game" type="Node2D"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)
 
 [node name="Player" parent="." instance=ExtResource("1_uwrxv")]
+z_index = 10
 position = Vector2(-52, 79)
 
 [node name="WorldBorder" type="StaticBody2D" parent="."]
@@ -32,3 +48,11 @@ shape = SubResource("WorldBoundaryShape2D_uwrxv")
 [node name="RightCollision" type="CollisionShape2D" parent="WorldBorder"]
 position = Vector2(0, -1)
 shape = SubResource("WorldBoundaryShape2D_lnu2h")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+position = Vector2(-1, 0)
+tile_map_data = PackedByteArray("AADx/wYAAAAAAAAAAADy/wYAAAAAAAAAAADz/wYAAAAAAAAAAAD0/wYAAAAAAAAAAAD1/wYAAAAAAAAAAAD2/wYAAAAAAAAAAAD3/wYAAAAAAAAAAAD4/wYAAAAAAAAAAAD5/wYAAAAAAAAAAAD6/wYAAAAAAAAAAAD7/wYAAAAAAAAAAAD8/wYAAAAAAAAAAAD9/wYAAAAAAAAAAAD+/wYAAAAAAAAAAAD//wYAAAAAAAAAAAAAAAYAAAAAAAAAAAAFAAUAAAAAAAAAAAAGAAUAAAAAAAAAAAAHAAUAAAAAAAAAAAAIAAUAAAAAAAAAAAAJAAUAAAAAAAAAAAAKAAUAAAAAAAAAAAALAAUAAAAAAAAAAAAMAAUAAAAAAAAAAAANAAUAAAAAAAAAAAAOAAUAAAAAAAAAAAAPAAUAAAAAAAAAAAD9/wAAAAAAAAAAAAD+/wAAAAAAAAAAAAD//wAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAHAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAJAAAAAAAAAAAAAADx//v/AAAAAAAAAADy//v/AAAAAAAAAADz//v/AAAAAAAAAAD0//v/AAAAAAAAAAD1//v/AAAAAAAAAAD2//v/AAAAAAAAAAD3//v/AAAAAAAAAAD4//v/AAAAAAAAAAD5//v/AAAAAAAAAAAJAPr/AAAAAAAAAAAKAPr/AAAAAAAAAAALAPr/AAAAAAAAAAAMAPr/AAAAAAAAAAANAPr/AAAAAAAAAAAOAPr/AAAAAAAAAAAPAPr/AAAAAAAAAADv/wEAAAAAAAAAAADw/wEAAAAAAAAAAADx/wEAAAAAAAAAAADy/wEAAAAAAAAAAADz/wEAAAAAAAAAAAD0/wEAAAAAAAAAAAD1/wEAAAAAAAAAAAA=")
+tile_set = SubResource("TileSet_iywne")
+
+[node name="CoyoteTimer" type="Timer" parent="."]
+script = ExtResource("3_lnu2h")
