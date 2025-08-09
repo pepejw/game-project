@@ -5,17 +5,28 @@ const SPEED = 240.0
 const JUMP_VELOCITY = -500.0
 const MOVE_ACCEL = 0.10
 const STOP_ACCEL = 0.10
+var jumpTimer = 0.0
+var jumpVelocity = 0.0
+
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
+	
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 		
 	# Handle jump.
+	if not Input.is_action_pressed("Jump"):
+		jumpTimer = 0.01
+		jumpVelocity = 0.0
 	if Input.is_action_just_pressed("Jump"):
-		if is_on_floor():
-			velocity.y = JUMP_VELOCITY
-		elif is_on_wall_only():
+		if is_on_wall_only():
 			velocity.y = JUMP_VELOCITY*0.5
+		elif is_on_floor():
+			jumpVelocity = -4.8
+	if Input.is_action_pressed("Jump"):
+		jumpTimer += delta
+		if not is_on_wall_only() and jumpTimer < 0.2:
+			velocity.y += jumpVelocity*(1/jumpTimer) #jumpVelocity will be 0 if jump not started on ground
 	# Get the input direction and handle the movement/deceleration.
 	var direction := Input.get_axis("Left", "Right")
 	if direction:
@@ -54,3 +65,12 @@ func _physics_process(delta: float) -> void:
 # changed to is_on_wall_only() probably not much difference due to elif but better suited.
 
 # i need to implement coyote time (for a few frames after falling you can still jump)
+#
+# implemented variable jump height
+#
+# Jumping on a ceiling gives height. This is not intended.
+# Jumping in mid-air gave height. Added is_on_floor() to is_action_just_pressed("Jump") and is_action_pressed("Jump")
+# Variable jumping no longer works as not on floor after jumping. Removing is_on_floor from is_action_pressed("Jump"). 
+# This works as the change in velocity.y is multiplied by jump_velocity, which is 0.0 unless jumped from floor
+# This broke wall jumping as it seems the infinite jump was causing it to work. 
+# Fixed by moving is_on_floor to elif after wall jump.
