@@ -2,11 +2,11 @@ extends CharacterBody2D
 
 
 const SPEED = 240.0
-const JUMP_VELOCITY = -500.0
+const WALL_JUMP_VELOCITY = -180.0
 const MOVE_ACCEL = 0.10
 const STOP_ACCEL = 0.10
-var jumpTimer = 0.0
-var jumpVelocity = 0.0
+var jump_timer = 0.0
+var jump_velocity = 0.0
 var coyote_timer = 0.0
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
@@ -17,18 +17,19 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 		coyote_timer += delta
 	if not Input.is_action_pressed("Jump"):
-		jumpTimer = 0.01
-		jumpVelocity = 0.0
-	if Input.is_action_just_pressed("Jump"):
+		jump_timer = 0.01
+		jump_velocity = 0.0
+	if jump_timer != 0.01: # If you press jump, jump timer increases. It is 0.01 by default
 		if is_on_wall_only():
-			velocity.y = JUMP_VELOCITY*0.5
-		elif coyote_timer < 0.1:
-			jumpVelocity = -4.2
-	if Input.is_action_pressed("Jump"):
-		jumpTimer += delta
-		if not is_on_wall_only() and jumpTimer < 0.2:
-			velocity.y += jumpVelocity*(1/jumpTimer) #jumpVelocity will be 0 if jump not started on ground
-	# Get the input direction and handle the movement/deceleration.
+			print("wall block")
+			velocity.y = WALL_JUMP_VELOCITY
+		elif coyote_timer < 0.1 and jump_timer<0.11:
+			jump_velocity = -18
+			velocity.y += jump_velocity*(0.55/(jump_timer*2)) #jumpVelocity will be 0 if jump not started on ground
+
+	if Input.is_action_pressed("Jump") and coyote_timer < 0.2 or Input.is_action_pressed("Jump") and is_on_wall_only():
+		jump_timer += delta
+			# Get the input direction and handle the movement/deceleration.
 	var direction := Input.get_axis("Left", "Right")
 	if direction:
 		#while abs(velocity.x) <= abs(direction*SPEED):
@@ -86,4 +87,16 @@ func _physics_process(delta: float) -> void:
 # is_on_floor, coyote_timer = 0.0
 # not is_on_floor, coyote_timer += delta
 # if coyote_timer < 10 or smtn jump
-# 10 is too many frames
+# 0.1 is best value
+# this worked :3
+
+# Jumping right before hitting the ground does not jump
+# Jump Buffers
+# so i already have jump_timer which always goes up when jump pressed
+# if jump_timer < 0.5 upon hitting floor, reset jump_timer to 0.01 and jump
+# change if_action_just_pressed to add 'or jump_timer < 0.5'
+
+# fixed numbers so jump feels better
+# jump buffer was broken but i fixed it by
+# jump_timer only starts increasing when on floor
+# so add wall to possible start points
