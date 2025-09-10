@@ -8,11 +8,13 @@ const STOP_ACCEL = 0.10
 var jump_timer = 0.0
 var jump_velocity = 0.0
 var coyote_timer = 0.0
+var jump_in_progress = false
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
 	# jump starts here now
 	if is_on_floor():
 		coyote_timer = 0.0
+		var jump_in_progress = false
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 		coyote_timer += delta
@@ -23,12 +25,14 @@ func _physics_process(delta: float) -> void:
 		if is_on_wall_only():
 			print("wall block")
 			velocity.y = WALL_JUMP_VELOCITY
-		elif coyote_timer < 0.1 and jump_timer<0.11:
+		elif jump_timer < 0.11:
 			jump_velocity = -18
 			velocity.y += jump_velocity*(0.55/(jump_timer*2)) #jumpVelocity will be 0 if jump not started on ground
 
-	if Input.is_action_pressed("Jump") and coyote_timer < 0.2 or Input.is_action_pressed("Jump") and is_on_wall_only():
+	if Input.is_action_pressed("Jump") and coyote_timer < 0.2 or Input.is_action_pressed("Jump") and is_on_wall_only() or Input.is_action_pressed("Jump") and jump_in_progress:
 		jump_timer += delta
+		jump_in_progress = true
+# ok i found problem 
 			# Get the input direction and handle the movement/deceleration.
 	var direction := Input.get_axis("Left", "Right")
 	if direction:
@@ -88,7 +92,7 @@ func _physics_process(delta: float) -> void:
 # not is_on_floor, coyote_timer += delta
 # if coyote_timer < 10 or smtn jump
 # 0.1 is best value
-# this worked :3
+# this worked !!
 
 # Jumping right before hitting the ground does not jump
 # Jump Buffers
@@ -100,3 +104,13 @@ func _physics_process(delta: float) -> void:
 # jump buffer was broken but i fixed it by
 # jump_timer only starts increasing when on floor
 # so add wall to possible start points
+
+# made wall jump  
+
+# coyote jump has less velocity after falling for longer
+# start timer on jump rather on leave?
+# Limiting jump to if coyote_timer < 0.1 bad, removed
+# Same thing but 0.2 was bad for start as if jump started late in coyote, will have less jump
+# jump_in_progress variable and now will also jump if jump_in_progress and jump button set.
+
+# issue: timers and jump rely on consistent frame rates.
