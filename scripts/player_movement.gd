@@ -14,27 +14,30 @@ func _physics_process(delta: float) -> void:
 	# jump starts here now
 	if is_on_floor():
 		coyote_timer = 0.0
-		var jump_in_progress = false
+		jump_in_progress = false
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 		coyote_timer += delta
-	if not Input.is_action_pressed("Jump"):
+	if not Input.is_action_pressed("Jump_1"):
 		jump_timer = 0.01
 		jump_velocity = 0.0
 	if jump_timer != 0.01: # If you press jump, jump timer increases. It is 0.01 by default
 		if is_on_wall_only():
-			print("wall block")
 			velocity.y = WALL_JUMP_VELOCITY
 		elif jump_timer < 0.11:
 			jump_velocity = -18
+			if velocity.y > 0.0:
+				velocity.y = 0.0
 			velocity.y += jump_velocity*(0.55/(jump_timer*2)) #jumpVelocity will be 0 if jump not started on ground
 
-	if Input.is_action_pressed("Jump") and coyote_timer < 0.2 or Input.is_action_pressed("Jump") and is_on_wall_only() or Input.is_action_pressed("Jump") and jump_in_progress:
+	if (Input.is_action_pressed("Jump_1") and coyote_timer < 0.1) or (Input.is_action_pressed("Jump_1") and is_on_wall_only()) or (jump_in_progress):
 		jump_timer += delta
 		jump_in_progress = true
+		if not Input.is_action_pressed("Jump_1"):
+			jump_in_progress = false
 # ok i found problem 
 			# Get the input direction and handle the movement/deceleration.
-	var direction := Input.get_axis("Left", "Right")
+	var direction := Input.get_axis("Left_1", "Right_1")
 	if direction:
 		#while abs(velocity.x) <= abs(direction*SPEED):
 		velocity.x += SPEED*MOVE_ACCEL*direction
@@ -76,9 +79,9 @@ func _physics_process(delta: float) -> void:
 #
 # Jumping on a ceiling gives height. This is not intended.
 
-# Jumping in mid-air gave height. Added is_on_floor() to is_action_just_pressed("Jump") and is_action_pressed("Jump")
+# Jumping in mid-air gave height. Added is_on_floor() to is_action_just_pressed("Jump_1") and is_action_pressed("Jump_1")
 
-# Variable jumping no longer works as not on floor after jumping. Removing is_on_floor from is_action_pressed("Jump"). 
+# Variable jumping no longer works as not on floor after jumping. Removing is_on_floor from is_action_pressed("Jump_1"). 
 # This works as the change in velocity.y is multiplied by jump_velocity, which is 0.0 unless jumped from floor
 # This broke wall jumping as it seems the infinite jump was causing it to work. 
 # Fixed by moving is_on_floor to elif after wall jump.
