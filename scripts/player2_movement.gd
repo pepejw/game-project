@@ -18,7 +18,7 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 		coyote_timer += delta
-	if not Input.is_action_pressed("Jump_2"):
+	if not Input.is_action_pressed("Jump_1"):
 		jump_timer = 0.01
 		jump_velocity = 0.0
 	if jump_timer != 0.01: # If you press jump, jump timer increases. It is 0.01 by default
@@ -30,14 +30,14 @@ func _physics_process(delta: float) -> void:
 				velocity.y = 0.0
 			velocity.y += jump_velocity*(0.55/(jump_timer*2)) #jumpVelocity will be 0 if jump not started on ground
 
-	if (Input.is_action_pressed("Jump_2") and coyote_timer < 0.1) or (Input.is_action_pressed("Jump_2") and is_on_wall_only()) or (jump_in_progress):
+	if (Input.is_action_pressed("Jump_1") and coyote_timer < 0.1) or (Input.is_action_pressed("Jump_1") and is_on_wall_only()) or (jump_in_progress):
 		jump_timer += delta
 		jump_in_progress = true
-		if not Input.is_action_pressed("Jump_2"):
+		if not Input.is_action_pressed("Jump_1"):
 			jump_in_progress = false
 # ok i found problem 
 			# Get the input direction and handle the movement/deceleration.
-	var direction := Input.get_axis("Left_2", "Right_2")
+	var direction := Input.get_axis("Left_1", "Right_1")
 	if direction:
 		#while abs(velocity.x) <= abs(direction*SPEED):
 		velocity.x += SPEED*MOVE_ACCEL*direction
