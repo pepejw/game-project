@@ -1,7 +1,6 @@
-[gd_scene load_steps=11 format=4 uid="uid://38brrf768xwe"]
+[gd_scene load_steps=10 format=4 uid="uid://38brrf768xwe"]
 
-[ext_resource type="PackedScene" uid="uid://d22r3nvirl1jh" path="res://scenes/player.tscn" id="1_uwrxv"]
-[ext_resource type="Script" uid="uid://bspl7chncb27t" path="res://scripts/player2_movement.gd" id="2_lnu2h"]
+[ext_resource type="Script" uid="uid://bu57q8h2ts01e" path="res://scenes/new_player.gd" id="1_lbhrr"]
 [ext_resource type="Texture2D" uid="uid://lruudkh5kkod" path="res://assets/platform_temp.png" id="2_yqjtg"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_yqjtg"]
@@ -33,18 +32,10 @@ sources/0 = SubResource("TileSetAtlasSource_lnu2h")
 sources/1 = SubResource("TileSetAtlasSource_lbhrr")
 
 [node name="Game" type="Node2D"]
+script = ExtResource("1_lbhrr")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)
-
-[node name="Player" parent="." instance=ExtResource("1_uwrxv")]
-z_index = 10
-position = Vector2(-57, 142)
-
-[node name="Player2" parent="." instance=ExtResource("1_uwrxv")]
-z_index = 10
-position = Vector2(241, 143)
-script = ExtResource("2_lnu2h")
 
 [node name="WorldBorder" type="StaticBody2D" parent="."]
 

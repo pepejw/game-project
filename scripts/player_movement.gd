@@ -9,49 +9,63 @@ var jump_timer = 0.0
 var jump_velocity = 0.0
 var coyote_timer = 0.0
 var jump_in_progress = false
+var nintendo = ""
+var device = ""
+	# GET ALL DEVICES tick
+	# GET ALREADY USED DEVICES tick
+	# IF ANY BUTTON PRESSED, CHECK IF CONTROLLER ALREADY USED
+	# IF NOT SET THAT CONTROLLER TO THIS PLAYER'S tick
+func _ready():
+	print(self)
+	print(get_meta(name))
+	#if device.contains("Nintendo_"):
+		#nintendo = "Nintendo_"
+	#device.replace("Nintendo_", "")
+	#
+	
+	
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
 	# jump starts here now
-	if is_on_floor():
-		coyote_timer = 0.0
-		jump_in_progress = false
-	if not is_on_floor():
-		velocity += get_gravity() * delta
-		coyote_timer += delta
-	if not Input.is_action_pressed("Jump_2"):
-		jump_timer = 0.01
-		jump_velocity = 0.0
-	if jump_timer != 0.01: # If you press jump, jump timer increases. It is 0.01 by default
-		if is_on_wall_only():
-			velocity.y = WALL_JUMP_VELOCITY
-		elif jump_timer < 0.11:
-			jump_velocity = -18
-			if velocity.y > 0.0:
-				velocity.y = 0.0
-			velocity.y += jump_velocity*(0.55/(jump_timer*2)) #jumpVelocity will be 0 if jump not started on ground
-
-	if (Input.is_action_pressed("Jump_2") and coyote_timer < 0.1) or (Input.is_action_pressed("Jump_2") and is_on_wall_only()) or (jump_in_progress):
-		jump_timer += delta
-		jump_in_progress = true
-		if not Input.is_action_pressed("Jump_2"):
+	if device != "":
+		if is_on_floor():
+			coyote_timer = 0.0
 			jump_in_progress = false
-# ok i found problem 
-			# Get the input direction and handle the movement/deceleration.
-	var direction := Input.get_axis("Left_2", "Right_2")
-	if direction:
-		#while abs(velocity.x) <= abs(direction*SPEED):
-		velocity.x += SPEED*MOVE_ACCEL*direction
-		if direction > 0:
-			if velocity.x > direction*SPEED:
-				velocity.x = direction*SPEED
-		elif direction < 0:
-			if velocity.x < direction*SPEED:
-				velocity.x = direction*SPEED
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED*STOP_ACCEL)
-
-	move_and_slide()
-
+		if not is_on_floor():
+			velocity += get_gravity() * delta
+			coyote_timer += delta
+		if not Input.is_action_pressed(device+"Jump"):
+			jump_timer = 0.01
+			jump_velocity = 0.0
+		if jump_timer != 0.01: # If you press jump, jump timer increases. It is 0.01 by default
+			if is_on_wall_only():
+				velocity.y = WALL_JUMP_VELOCITY
+			elif jump_timer < 0.11:
+				jump_velocity = -18
+				if velocity.y > 0.0:
+					velocity.y = 0.0
+				velocity.y += jump_velocity*(0.55/(jump_timer*2)) #jumpVelocity will be 0 if jump not started on ground
+				velocity.y = clamp(velocity.y,-425,510)
+		if (Input.is_action_pressed(device+"Jump") and coyote_timer < 0.1) or (Input.is_action_pressed(device+"Jump") and is_on_wall_only()) or (jump_in_progress):
+			jump_timer += delta
+			jump_in_progress = true
+			if not Input.is_action_pressed(device+"Jump"):
+				jump_in_progress = false
+	# ok i found problem 
+				# Get the input direction and handle the movement/deceleration.
+		var direction := Input.get_axis(device+"Left", device+"Right")
+		if direction:
+			#while abs(velocity.x) <= abs(direction*SPEED):
+			velocity.x += SPEED*MOVE_ACCEL*direction
+			if direction > 0:
+				if velocity.x > direction*SPEED:
+					velocity.x = direction*SPEED
+			elif direction < 0:
+				if velocity.x < direction*SPEED:
+					velocity.x = direction*SPEED
+		else:
+			velocity.x = move_toward(velocity.x, 0, SPEED*STOP_ACCEL)
+		move_and_slide()
 
 #issues i have had quick access
 # speed and gravity values weren't entirely right.
