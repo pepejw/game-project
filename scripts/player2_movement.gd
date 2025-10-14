@@ -8,10 +8,7 @@ var jump_timer = 0.0
 var jump_velocity = 0.0
 var coyote_timer = 0.0
 var jump_in_progress = false
-var device = "Keyboard0_"
-enum DIRECTION {right, left}
-var can_attack = true
-var last_direction = DIRECTION.right
+var device = "Keyboard1_"
 	# GET ALL DEVICES tick
 	# GET ALREADY USED DEVICES tick
 	# IF ANY BUTTON PRESSED, CHECK IF CONTROLLER ALREADY USED
@@ -49,51 +46,21 @@ func _physics_process(delta: float) -> void:
 		if direction:
 			#while abs(velocity.x) <= abs(direction*SPEED):
 			velocity.x += SPEED*MOVE_ACCEL*direction
-			if direction > 0: #right
-				last_direction = DIRECTION.right
+			if direction > 0:
 				if velocity.x > direction*SPEED:
 					velocity.x = direction*SPEED
-				get_node("Sprite2D").flip_h = false
-				get_node("Attack_Hitbox").scale.x = abs(get_node("Attack_Hitbox").scale.x)
-	
-			elif direction < 0: #left
-				last_direction = DIRECTION.left
+				if scale.x < 0:
+					apply_scale(Vector2(-1,1))
+				
+			elif direction < 0:
 				if velocity.x < direction*SPEED:
 					velocity.x = direction*SPEED
-				get_child(0).flip_h = true
-				get_node("Attack_Hitbox").scale.x = -abs(get_node("Attack_Hitbox").scale.x)
+				if scale.x > 0 :
+					apply_scale(Vector2(-1,1))
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED*STOP_ACCEL)
-		
-		if Input.is_action_just_pressed(device+"Atk"):
-			if can_attack:
-				attack(last_direction)
-			
 		move_and_slide()
 
-func attack(last_direction):
-	get_node("Attack_Hitbox").enabled = true
-	can_attack = false
-	get_node("Timer").start()
-	var attack_hitbox = $Attack_Hitbox
-	attack_hitbox.force_shapecast_update()
-	for i in range(attack_hitbox.get_collision_count()):
-		var current_collider = attack_hitbox.get_collider(i)
-		if current_collider is CharacterBody2D:
-			print("player")
-	
-	
-
-func _on_attack_timer_timeout() -> void:
-	print("timer timeout")
-	get_node("Attack_Hitbox").enabled = false
-	can_attack = true
-	get_node("Timer").stop()
-	
-	
-		
-		
-		
 #issues i have had quick access
 # speed and gravity values weren't entirely right.
 #
@@ -162,5 +129,4 @@ func _on_attack_timer_timeout() -> void:
 # issue: jumping adds to velocity, but if gravity, vertical velocity might be down. 
 # fix: if velocity.y > 0.0, set to 0.0 before adding
 
-#issue: how flip attack hitbox?:
-#fix: flip sprite and have a second attack hitbox
+# i spent like 3 weeks trying to add controller support but it just wouldnt so ive removed it

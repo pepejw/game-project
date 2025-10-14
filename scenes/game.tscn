@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=4 uid="uid://38brrf768xwe"]
+[gd_scene load_steps=11 format=4 uid="uid://38brrf768xwe"]
 
-[ext_resource type="Script" uid="uid://bu57q8h2ts01e" path="res://scenes/new_player.gd" id="1_lbhrr"]
+[ext_resource type="PackedScene" uid="uid://d22r3nvirl1jh" path="res://scenes/player.tscn" id="2_lnu2h"]
 [ext_resource type="Texture2D" uid="uid://lruudkh5kkod" path="res://assets/platform_temp.png" id="2_yqjtg"]
+[ext_resource type="Script" uid="uid://l0tvtjxcicsr" path="res://scripts/player2_movement.gd" id="3_lbhrr"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_yqjtg"]
 distance = -162.0
@@ -32,7 +33,6 @@ sources/0 = SubResource("TileSetAtlasSource_lnu2h")
 sources/1 = SubResource("TileSetAtlasSource_lbhrr")
 
 [node name="Game" type="Node2D"]
-script = ExtResource("1_lbhrr")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)
@@ -56,3 +56,10 @@ shape = SubResource("WorldBoundaryShape2D_lbhrr")
 position = Vector2(-1, 0)
 tile_map_data = PackedByteArray("AADu/wQAAAAAAAAAAADv/wQAAAAAAAAAAADw/wQAAAAAAAAAAADx/wQAAAAAAAAAAADy/wQAAAAAAAAAAADz/wQAAAAAAAAAAAD0/wQAAAAAAAAAAAD1/wQAAAAAAAAAAAD2/wQAAAAAAAAAAAD3/wQAAAAAAAAAAAD4/wQAAAAAAAAAAAD5/wQAAAAAAAAAAAD6/wQAAAAAAAAAAAARAAUAAAAAAAAAAAAOAAUAAAAAAAAAAAAPAAUAAAAAAAAAAAAQAAUAAAAAAAAAAAANAAUAAAAAAAAAAAAMAAUAAAAAAAAAAAD+/wAAAAAAAAAAAAD//wAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAHAAAAAAAAAAAAAAAIAAAAAAAAAAAAAADw//3/AAAAAAAAAADx//3/AAAAAAAAAADy//3/AAAAAAAAAADz//3/AAAAAAAAAAD0//3/AAAAAAAAAAD1//3/AAAAAAAAAAD2//3/AAAAAAAAAAD3//3/AAAAAAAAAAAQAPz/AAAAAAAAAAD7//r/AAAAAAAAAAD8//r/AAAAAAAAAAD9//r/AAAAAAAAAAD+//r/AAAAAAAAAAD///r/AAAAAAAAAAAAAPr/AAAAAAAAAAABAPr/AAAAAAAAAAAPAPz/AAAAAAAAAAA=")
 tile_set = SubResource("TileSet_iywne")
+
+[node name="Player" parent="." instance=ExtResource("2_lnu2h")]
+position = Vector2(236, 64)
+
+[node name="Player2" parent="." instance=ExtResource("2_lnu2h")]
+position = Vector2(-172, 49)
+script = ExtResource("3_lbhrr")
