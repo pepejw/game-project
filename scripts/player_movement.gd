@@ -68,7 +68,7 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_just_pressed(device+"Atk"):
 			if can_attack:
 				attack(last_direction)
-		if !$Timer.is_stopped():
+		if get_node("Attack_Hitbox").enabled:
 			var attack_hitbox = $Attack_Hitbox
 			attack_hitbox.force_shapecast_update()
 			for i in range(attack_hitbox.get_collision_count()):
