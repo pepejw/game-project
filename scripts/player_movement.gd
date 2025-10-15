@@ -68,6 +68,14 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_just_pressed(device+"Atk"):
 			if can_attack:
 				attack(last_direction)
+		if !$Timer.is_stopped():
+			var attack_hitbox = $Attack_Hitbox
+			attack_hitbox.force_shapecast_update()
+			for i in range(attack_hitbox.get_collision_count()):
+				var current_collider = attack_hitbox.get_collider(i)
+				if current_collider is CharacterBody2D:
+					_on_attack_timer_timeout()
+					print("player")
 			
 		move_and_slide()
 
@@ -75,13 +83,6 @@ func attack(last_direction):
 	get_node("Attack_Hitbox").enabled = true
 	can_attack = false
 	get_node("Timer").start()
-	var attack_hitbox = $Attack_Hitbox
-	attack_hitbox.force_shapecast_update()
-	for i in range(attack_hitbox.get_collision_count()):
-		var current_collider = attack_hitbox.get_collider(i)
-		if current_collider is CharacterBody2D:
-			print("player")
-	
 	
 
 func _on_attack_timer_timeout() -> void:
@@ -163,4 +164,7 @@ func _on_attack_timer_timeout() -> void:
 # fix: if velocity.y > 0.0, set to 0.0 before adding
 
 #issue: how flip attack hitbox?:
-#fix: flip sprite and have a second attack hitbox
+#fix: different code to flip hitbox: use absolute values
+
+#issue: hitbox only checks once when attack pressed
+#fix: ??? 
