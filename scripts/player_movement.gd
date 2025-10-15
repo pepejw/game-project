@@ -74,7 +74,7 @@ func _physics_process(delta: float) -> void:
 			for i in range(attack_hitbox.get_collision_count()):
 				var current_collider = attack_hitbox.get_collider(i)
 				if current_collider is CharacterBody2D:
-					_on_attack_timer_timeout()
+					get_node("Attack_Hitbox").enabled = false
 					print("player")
 			
 		move_and_slide()
