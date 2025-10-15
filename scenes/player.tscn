@@ -6,12 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://c2o5mdwgs00ks" path="res://assets/player_temp_move_atk.png" id="4_tuyoq"]
 [ext_resource type="Texture2D" uid="uid://na8qahccjysg" path="res://assets/player_temp_still_atk.png" id="5_fjrip"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_g2els"]
-radius = 4.0
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qhqgy"]
-height = 20.0
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_smehm"]
 atlas = ExtResource("3_qlg0r")
 region = Rect2(0, 0, 32, 32)
@@ -116,7 +110,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle",
-"speed": 5.0
+"speed": 0.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -145,7 +139,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"move",
-"speed": 5.0
+"speed": 16.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -174,7 +168,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"move_atk",
-"speed": 5.0
+"speed": 16.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -203,11 +197,22 @@ animations = [{
 }],
 "loop": true,
 "name": &"still_atk",
-"speed": 5.0
+"speed": 16.0
 }]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_g2els"]
+radius = 4.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qhqgy"]
+height = 20.0
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_g2els")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_gl8cc")
+animation = &"idle"
+autoplay = "idle"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_3vyb7")
@@ -224,9 +229,5 @@ shape = SubResource("CapsuleShape2D_qhqgy")
 target_position = Vector2(-12.000001, 16.999998)
 
 [node name="Timer" type="Timer" parent="."]
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = SubResource("SpriteFrames_gl8cc")
-animation = &"still_atk"
 
 [connection signal="timeout" from="Timer" to="." method="_on_attack_timer_timeout"]

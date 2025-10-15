@@ -12,6 +12,9 @@ var device = "Keyboard0_"
 enum DIRECTION {right, left}
 var can_attack = true
 var last_direction = DIRECTION.right
+var move = false
+var atk = false
+
 	# GET ALL DEVICES tick
 	# GET ALREADY USED DEVICES tick
 	# IF ANY BUTTON PRESSED, CHECK IF CONTROLLER ALREADY USED
@@ -43,54 +46,78 @@ func _physics_process(delta: float) -> void:
 			jump_in_progress = true
 			if not Input.is_action_pressed(device+"Jump"):
 				jump_in_progress = false
+		change_animation()
 	# ok i found problem 
 				# Get the input direction and handle the movement/deceleration.
 		var direction := Input.get_axis(device+"Left", device+"Right")
 		if direction:
 			#while abs(velocity.x) <= abs(direction*SPEED):
 			velocity.x += SPEED*MOVE_ACCEL*direction
+			
 			if direction > 0: #right
 				last_direction = DIRECTION.right
 				if velocity.x > direction*SPEED:
 					velocity.x = direction*SPEED
-				get_node("Sprite2D").flip_h = false
-				get_node("Attack_Hitbox").scale.x = abs(get_node("Attack_Hitbox").scale.x)
+				$AnimatedSprite2D.flip_h = false
+				$Attack_Hitbox.scale.x = abs($Attack_Hitbox.scale.x)
 	
 			elif direction < 0: #left
 				last_direction = DIRECTION.left
 				if velocity.x < direction*SPEED:
 					velocity.x = direction*SPEED
-				get_child(0).flip_h = true
-				get_node("Attack_Hitbox").scale.x = -abs(get_node("Attack_Hitbox").scale.x)
+				$AnimatedSprite2D.flip_h = true
+				$Attack_Hitbox.scale.x = -abs($Attack_Hitbox.scale.x)
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED*STOP_ACCEL)
 		
 		if Input.is_action_just_pressed(device+"Atk"):
 			if can_attack:
 				attack(last_direction)
-		if get_node("Attack_Hitbox").enabled:
+		if $Attack_Hitbox.enabled:
 			var attack_hitbox = $Attack_Hitbox
 			attack_hitbox.force_shapecast_update()
 			for i in range(attack_hitbox.get_collision_count()):
 				var current_collider = attack_hitbox.get_collider(i)
 				if current_collider is CharacterBody2D:
-					get_node("Attack_Hitbox").enabled = false
+					$Attack_Hitbox.enabled = false
 					print("player")
 			
 		move_and_slide()
 
 func attack(last_direction):
-	get_node("Attack_Hitbox").enabled = true
+	$Attack_Hitbox.enabled = true
 	can_attack = false
-	get_node("Timer").start()
+	$Timer.start()
 	
 
 func _on_attack_timer_timeout() -> void:
 	print("timer timeout")
-	get_node("Attack_Hitbox").enabled = false
+	$Attack_Hitbox.enabled = false
 	can_attack = true
-	get_node("Timer").stop()
+	$Timer.stop()
+
+func change_animation():
+	if velocity.x != 0:
+		move = true
+	else:
+		move = false
+	if !$Timer.is_stopped():
+		atk = true
+	else:
+		atk = false
 	
+	match [move, atk]:
+		[false, false]:
+			$AnimatedSprite2D.animation = "idle"
+			
+		[false, true]:
+			$AnimatedSprite2D.animation = "still_atk"
+		[true, false]:
+			$AnimatedSprite2D.animation = "move"
+		[true, true]:
+			$AnimatedSprite2D.animation = "move_atk"
+			
+		
 	
 		
 		
