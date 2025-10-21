@@ -9,6 +9,12 @@ var jump_velocity = 0.0
 var coyote_timer = 0.0
 var jump_in_progress = false
 var device = "Keyboard1_"
+enum DIRECTION {right, left}
+var can_attack = true
+var last_direction = DIRECTION.right
+var move = false
+var atk = false
+
 	# GET ALL DEVICES tick
 	# GET ALREADY USED DEVICES tick
 	# IF ANY BUTTON PRESSED, CHECK IF CONTROLLER ALREADY USED
@@ -40,27 +46,76 @@ func _physics_process(delta: float) -> void:
 			jump_in_progress = true
 			if not Input.is_action_pressed(device+"Jump"):
 				jump_in_progress = false
+		change_animation()
 	# ok i found problem 
 				# Get the input direction and handle the movement/deceleration.
 		var direction := Input.get_axis(device+"Left", device+"Right")
 		if direction:
 			#while abs(velocity.x) <= abs(direction*SPEED):
 			velocity.x += SPEED*MOVE_ACCEL*direction
-			if direction > 0:
+			
+			if direction > 0: #right
+				last_direction = DIRECTION.right
 				if velocity.x > direction*SPEED:
 					velocity.x = direction*SPEED
-				if scale.x < 0:
-					apply_scale(Vector2(-1,1))
-				
-			elif direction < 0:
+				$AnimatedSprite2D.flip_h = false
+				$Attack_Hitbox.scale.x = abs($Attack_Hitbox.scale.x)
+	
+			elif direction < 0: #left
+				last_direction = DIRECTION.left
 				if velocity.x < direction*SPEED:
 					velocity.x = direction*SPEED
-				if scale.x > 0 :
-					apply_scale(Vector2(-1,1))
+				$AnimatedSprite2D.flip_h = true
+				$Attack_Hitbox.scale.x = -abs($Attack_Hitbox.scale.x)
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED*STOP_ACCEL)
+		
+		if Input.is_action_just_pressed(device+"Atk"):
+			if can_attack:
+				attack()
+			
+			
 		move_and_slide()
 
+func attack():
+	$Attack_Hitbox.monitorable = true
+	can_attack = false
+	$Timer.start()
+	
+
+		
+func _on_attack_timer_timeout() -> void:
+	print("timer timeout")
+	$Attack_Hitbox.monitorable = false
+	can_attack = true
+	$Timer.stop()
+
+func change_animation():
+	if velocity.x != 0:
+		move = true
+	else:
+		move = false
+	if !$Timer.is_stopped():
+		atk = true
+	else:
+		atk = false
+	
+	match [move, atk]:
+		[false, false]:
+			$AnimatedSprite2D.animation = "idle"
+			
+		[false, true]:
+			$AnimatedSprite2D.animation = "still_atk"
+		[true, false]:
+			$AnimatedSprite2D.animation = "move"
+		[true, true]:
+			$AnimatedSprite2D.animation = "move_atk"
+			
+		
+	
+		
+		
+		
 #issues i have had quick access
 # speed and gravity values weren't entirely right.
 #
@@ -129,4 +184,26 @@ func _physics_process(delta: float) -> void:
 # issue: jumping adds to velocity, but if gravity, vertical velocity might be down. 
 # fix: if velocity.y > 0.0, set to 0.0 before adding
 
-# i spent like 3 weeks trying to add controller support but it just wouldnt so ive removed it
+#issue: how flip attack hitbox?:
+#fix: different code to flip hitbox: use absolute values
+
+#issue: hitbox only checks once when attack pressed
+#fix: disable on hit or timer end, but keep it on until either of those happen
+
+#issue: cannot get colliders on damage hitbox
+#fix: change all hitboxes to area2d
+
+func _on_damage_hitbox_area_entered():
+	print("damage entered")
+	var damage_hitbox = $Damage_Hitbox
+	for current_collider in damage_hitbox.get_overlapping_areas():
+		print(current_collider)
+		if current_collider != $Attack_Hitbox and current_collider.name != "Damage_Hitbox":
+			print(0)
+			
+func _on_attack_hitbox_area_entered(area: Area2D) -> void:
+	print("attack entered")
+	var attack_hitbox = $Attack_Hitbox
+	for current_collider in attack_hitbox.get_overlapping_areas():
+		if current_collider != $Damage_Hitbox and current_collider.name != "Attack_Hitbox":
+			attack_hitbox.monitorable = false

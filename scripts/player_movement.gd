@@ -72,27 +72,21 @@ func _physics_process(delta: float) -> void:
 		
 		if Input.is_action_just_pressed(device+"Atk"):
 			if can_attack:
-				attack(last_direction)
-		if $Attack_Hitbox.enabled:
-			var attack_hitbox = $Attack_Hitbox
-			attack_hitbox.force_shapecast_update()
-			for i in range(attack_hitbox.get_collision_count()):
-				var current_collider = attack_hitbox.get_collider(i)
-				if current_collider is CharacterBody2D:
-					$Attack_Hitbox.enabled = false
-					print("player")
+				attack()
+			
 			
 		move_and_slide()
 
-func attack(last_direction):
-	$Attack_Hitbox.enabled = true
+func attack():
+	$Attack_Hitbox.monitorable = true
 	can_attack = false
 	$Timer.start()
 	
 
+		
 func _on_attack_timer_timeout() -> void:
 	print("timer timeout")
-	$Attack_Hitbox.enabled = false
+	$Attack_Hitbox.monitorable = false
 	can_attack = true
 	$Timer.stop()
 
@@ -194,4 +188,22 @@ func change_animation():
 #fix: different code to flip hitbox: use absolute values
 
 #issue: hitbox only checks once when attack pressed
-#fix: ??? 
+#fix: disable on hit or timer end, but keep it on until either of those happen
+
+#issue: cannot get colliders on damage hitbox
+#fix: change all hitboxes to area2d
+
+func _on_damage_hitbox_area_entered(area):
+	print(area)
+	var damage_hitbox = $Damage_Hitbox
+	for current_collider in damage_hitbox.get_overlapping_areas():
+		print(0)
+		if current_collider != $Attack_Hitbox and current_collider.name != "Damage_Hitbox":
+			print(0)
+			
+func _on_attack_hitbox_area_entered(area) -> void:
+	print(area)
+	var attack_hitbox = $Attack_Hitbox
+	for current_collider in attack_hitbox.get_overlapping_areas():
+		if current_collider != $Damage_Hitbox and current_collider.name != "Attack_Hitbox":
+			attack_hitbox.monitorable = false

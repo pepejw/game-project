@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://d22r3nvirl1jh"]
+[gd_scene load_steps=34 format=3 uid="uid://d22r3nvirl1jh"]
 
 [ext_resource type="Texture2D" uid="uid://bdxbo8enyl3ll" path="res://assets/player_temp.png" id="1_3vyb7"]
 [ext_resource type="Script" uid="uid://bspl7chncb27t" path="res://scripts/player_movement.gd" id="1_g2els"]
@@ -203,8 +203,13 @@ animations = [{
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_g2els"]
 radius = 4.0
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qhqgy"]
-height = 20.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tuyoq"]
+radius = 7.7689543
+height = 29.713545
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qlg0r"]
+radius = 3.0
+height = 28.0
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_g2els")
@@ -214,20 +219,29 @@ sprite_frames = SubResource("SpriteFrames_gl8cc")
 animation = &"idle"
 autoplay = "idle"
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_3vyb7")
-
 [node name="Geometry_Hitbox" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_g2els")
 debug_color = Color(1, 0, 0.176471, 0.419608)
 
-[node name="Attack_Hitbox" type="ShapeCast2D" parent="."]
+[node name="Attack_Hitbox" type="Area2D" parent="."]
 position = Vector2(0, -15)
-rotation = 3.1415927
+rotation = -3.1415925
 scale = Vector2(1, -1)
-shape = SubResource("CapsuleShape2D_qhqgy")
-target_position = Vector2(-12.000001, 16.999998)
+monitoring = false
+monitorable = false
+
+[node name="Attack_Hitbox_Shape" type="CollisionShape2D" parent="Attack_Hitbox"]
+position = Vector2(-9.000001, 13)
+rotation = 0.79761547
+shape = SubResource("CapsuleShape2D_tuyoq")
+
+[node name="Damage_Hitbox" type="Area2D" parent="."]
+
+[node name="Damage_Hitbox_Shape" type="CollisionShape2D" parent="Damage_Hitbox"]
+shape = SubResource("CapsuleShape2D_qlg0r")
 
 [node name="Timer" type="Timer" parent="."]
 
+[connection signal="area_entered" from="Attack_Hitbox" to="." method="_on_attack_hitbox_area_entered"]
+[connection signal="area_entered" from="Damage_Hitbox" to="." method="_on_damage_hitbox_area_entered"]
 [connection signal="timeout" from="Timer" to="." method="_on_attack_timer_timeout"]
