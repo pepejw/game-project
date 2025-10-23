@@ -240,8 +240,9 @@ shape = SubResource("CapsuleShape2D_tuyoq")
 [node name="Damage_Hitbox_Shape" type="CollisionShape2D" parent="Damage_Hitbox"]
 shape = SubResource("CapsuleShape2D_qlg0r")
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Attack_Timer" type="Timer" parent="."]
+wait_time = 0.35
 
 [connection signal="area_entered" from="Attack_Hitbox" to="." method="_on_attack_hitbox_area_entered"]
 [connection signal="area_entered" from="Damage_Hitbox" to="." method="_on_damage_hitbox_area_entered"]
-[connection signal="timeout" from="Timer" to="." method="_on_attack_timer_timeout"]
+[connection signal="timeout" from="Attack_Timer" to="." method="_on_attack_timer_timeout"]

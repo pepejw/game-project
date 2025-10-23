@@ -1,8 +1,7 @@
-[gd_scene load_steps=11 format=4 uid="uid://38brrf768xwe"]
+[gd_scene load_steps=10 format=4 uid="uid://38brrf768xwe"]
 
 [ext_resource type="PackedScene" uid="uid://d22r3nvirl1jh" path="res://scenes/player.tscn" id="2_lnu2h"]
 [ext_resource type="Texture2D" uid="uid://lruudkh5kkod" path="res://assets/platform_temp.png" id="2_yqjtg"]
-[ext_resource type="Script" uid="uid://l0tvtjxcicsr" path="res://scripts/player2_movement.gd" id="3_lbhrr"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_yqjtg"]
 distance = -162.0
@@ -62,4 +61,3 @@ position = Vector2(236, 64)
 
 [node name="Player2" parent="." instance=ExtResource("2_lnu2h")]
 position = Vector2(-172, 49)
-script = ExtResource("3_lbhrr")

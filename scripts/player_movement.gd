@@ -8,13 +8,19 @@ var jump_timer = 0.0
 var jump_velocity = 0.0
 var coyote_timer = 0.0
 var jump_in_progress = false
-var device = "Keyboard0_"
 enum DIRECTION {right, left}
 var can_attack = true
+var device = ""
 var last_direction = DIRECTION.right
 var move = false
 var atk = false
-
+var health = 120
+func _ready():
+	match name:
+		"Player":
+			device = "Keyboard0_"
+		"Player2":
+			device = "Keyboard1_"
 	# GET ALL DEVICES tick
 	# GET ALREADY USED DEVICES tick
 	# IF ANY BUTTON PRESSED, CHECK IF CONTROLLER ALREADY USED
@@ -79,23 +85,24 @@ func _physics_process(delta: float) -> void:
 
 func attack():
 	$Attack_Hitbox.monitorable = true
+	$Attack_Hitbox.monitoring = true
 	can_attack = false
-	$Timer.start()
+	$Attack_Timer.start()
 	
 
 		
 func _on_attack_timer_timeout() -> void:
-	print("timer timeout")
 	$Attack_Hitbox.monitorable = false
+	$Attack_Hitbox.monitoring = false
 	can_attack = true
-	$Timer.stop()
+	$Attack_Timer.stop()
 
 func change_animation():
 	if velocity.x != 0:
 		move = true
 	else:
 		move = false
-	if !$Timer.is_stopped():
+	if !$Attack_Timer.is_stopped():
 		atk = true
 	else:
 		atk = false
@@ -111,7 +118,15 @@ func change_animation():
 		[true, true]:
 			$AnimatedSprite2D.animation = "move_atk"
 			
-		
+func _on_damage_hitbox_area_entered(area):
+	#print("damage",area)
+	if area != $Attack_Hitbox and area.name == "Attack_Hitbox":
+		damage()
+			
+func _on_attack_hitbox_area_entered(area) -> void:
+	if area != $Damage_Hitbox and area.name == "Damage_Hitbox":
+		$Attack_Hitbox.set_deferred("monitoring", false)
+		$Attack_Hitbox.set_deferred("monitorable", false)
 	
 		
 		
@@ -193,17 +208,19 @@ func change_animation():
 #issue: cannot get colliders on damage hitbox
 #fix: change all hitboxes to area2d
 
-func _on_damage_hitbox_area_entered(area):
-	print(area)
-	var damage_hitbox = $Damage_Hitbox
-	for current_collider in damage_hitbox.get_overlapping_areas():
-		print(0)
-		if current_collider != $Attack_Hitbox and current_collider.name != "Damage_Hitbox":
-			print(0)
-			
-func _on_attack_hitbox_area_entered(area) -> void:
-	print(area)
-	var attack_hitbox = $Attack_Hitbox
-	for current_collider in attack_hitbox.get_overlapping_areas():
-		if current_collider != $Damage_Hitbox and current_collider.name != "Attack_Hitbox":
-			attack_hitbox.monitorable = false
+#issue: i need to get damage and turn off 
+#fix: when attack pressed, enable monitoring and monitorable on atk hitbox, then when either timer stops or when it hits, disable.
+
+#issue: i need to change 2 files when editing code
+#fix: change device based on name: implementation was still there from old controller code
+
+#issue: damage code would run twice
+#fix: set monitoring and monitorable to false on attack_hitbox after attack hitbox area entered
+
+#issue: not setting monitors to false
+#fix: i have to use set_deferred() because i can't turn it off on the same frame
+
+#issue: same issue?
+#fix: it actually is doing what i want but i was testing in the same frame.
+func damage():
+	print("damage code here")
