@@ -243,6 +243,8 @@ shape = SubResource("CapsuleShape2D_qlg0r")
 [node name="Attack_Timer" type="Timer" parent="."]
 wait_time = 0.35
 
+[node name="Damage_Timer" type="Timer" parent="."]
+
 [connection signal="area_entered" from="Attack_Hitbox" to="." method="_on_attack_hitbox_area_entered"]
 [connection signal="area_entered" from="Damage_Hitbox" to="." method="_on_damage_hitbox_area_entered"]
 [connection signal="timeout" from="Attack_Timer" to="." method="_on_attack_timer_timeout"]

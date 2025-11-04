@@ -15,6 +15,7 @@ var last_direction = DIRECTION.right
 var move = false
 var atk = false
 var health = 120
+var taken_damage = false
 func _ready():
 	match name:
 		"Player":
@@ -223,4 +224,7 @@ func _on_attack_hitbox_area_entered(area) -> void:
 #issue: same issue?
 #fix: it actually is doing what i want but i was testing in the same frame.
 func damage():
-	print("damage code here")
+	#take damage, play animation, stop attack ability
+	taken_damage = true
+	health -= 5
+	
